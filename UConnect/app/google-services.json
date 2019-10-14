@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "696104054790",
+    "firebase_url": "https://u-connect-c9a8d.firebaseio.com",
+    "project_id": "u-connect-c9a8d",
+    "storage_bucket": "u-connect-c9a8d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696104054790:android:0755c9682a82df66509387",
+        "android_client_info": {
+          "package_name": "com.sakib.uconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696104054790-l6q5euoggehmc19f6us5ncjtkungb32u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sakib.uconnect",
+            "certificate_hash": "168ee14c11294802fb27260c56acb6f93a7b6185"
+          }
+        },
+        {
+          "client_id": "696104054790-vmkqr7pkgjv3b738c5e4rr948po7ctd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAn1HzEB_qyLrfjoCJNgljgFxgo57QmzZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "696104054790-vmkqr7pkgjv3b738c5e4rr948po7ctd6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
