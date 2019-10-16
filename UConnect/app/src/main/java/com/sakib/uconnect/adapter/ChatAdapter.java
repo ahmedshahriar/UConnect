@@ -62,15 +62,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         final Chat chat = chatList.get(position);
 
         holder.tvMessageBody.setText(chat.getMessage());
+        Log.d(context+"", "onBindViewHolder: "+imageUrl);
 
-        if(imageUrl.equals("default")){
-            if(holder.profilePic!=null){
-                holder.profilePic.setImageResource(R.drawable.blank_pro_pic);
+        if(holder.profilePic!=null){
+            if(imageUrl.equals("default")){
+                    holder.profilePic.setImageResource(R.drawable.blank_pro_pic);
             }
-
-        }
-        else {
-            Glide.with(context).load(imageUrl).into(holder.profilePic);
+            else {
+                Glide.with(context.getApplicationContext()).load(imageUrl).into(holder.profilePic);
+            }
         }
 
 

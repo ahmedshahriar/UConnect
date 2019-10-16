@@ -4,17 +4,35 @@ public class User {
     private String id;
     private String name;
     private String imageUrl;
+    private String mobileNumber;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public User() {
     }
 
-    public User(String id, String userName, String imageUrl) {
+    public User(String id, String name, String imageUrl, String mobileNumber, String status) {
         this.id = id;
-        this.name = userName;
+        this.name = name;
         this.imageUrl = imageUrl;
+        this.mobileNumber = mobileNumber;
+        this.status = status;
     }
 
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
 
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 
     public String getId() {
         return id;

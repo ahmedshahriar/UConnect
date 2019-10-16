@@ -3,17 +3,18 @@ package com.sakib.uconnect;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,28 +22,55 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.sakib.uconnect.adapter.ChatUserAdapter;
+import com.sakib.uconnect.model.Chat;
 import com.sakib.uconnect.model.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private Context mContext = MainActivity.this;
     private static final String TAG = "MainActivity";
-    FirebaseUser firebaseUser;
-    DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
+    private List<User> mUsers;
+    private List<String> userList;
+    private ChatUserAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.overridePendingTransition(0, 0);
         setContentView(R.layout.activity_main);
+        recyclerView = findViewById(R.id.main_recycler_view_chat_user);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        userList = new ArrayList<>();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               // User user =
+               userList.clear();
+
+               for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                   Chat chat = snapshot.getValue(Chat.class);
+                   if(chat.getSender().equals(firebaseUser.getUid())){
+                    userList.add(chat.getReceiver());
+                   }
+
+                   if(chat.getReceiver().equals(firebaseUser.getUid())){
+                       userList.add(chat.getSender());
+                   }
+               }
+
+               readChats();
             }
 
             @Override
@@ -66,6 +94,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void readChats(){
+        mUsers = new ArrayList<>();
+        databaseReference  = FirebaseDatabase.getInstance().getReference("Users");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUsers.clear();
+
+                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+
+                    for(String id : userList){
+
+                        if(user.getId().equals(id)){
+                            if(mUsers.size()!=0){
+                                for(User user1:mUsers){
+                                    if(!user.getId().equals(user1.getId())){
+                                        mUsers.add(user);
+                                    }
+                                }
+                            }else {
+                                mUsers.add(user);
+                            }
+
+                        }
+
+                    }
+
+
+                }
+
+
+                adapter = new ChatUserAdapter(mContext,mUsers, true);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -82,13 +154,34 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Log.d(TAG, "onOptionsItemSelected: clicked");
+            Intent intent = new Intent(mContext, ProfileActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-//    private void setupToolbar() {
+    private void status(String status){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        status("offline");
+    }
+
+    //    private void setupToolbar() {
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        //handle action bar null pointer exception

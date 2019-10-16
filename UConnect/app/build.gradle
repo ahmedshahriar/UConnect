@@ -39,6 +39,9 @@ dependencies {
     //circular imgaeview
     implementation 'de.hdodenhof:circleimageview:3.0.1'
 
+    //search view
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'

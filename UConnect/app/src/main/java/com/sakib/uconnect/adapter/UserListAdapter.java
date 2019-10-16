@@ -45,7 +45,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             holder.profilePic.setImageResource(R.drawable.blank_pro_pic);
         }
         else {
-            Glide.with(context).load(user.getImageUrl()).into(holder.profilePic);
+            Glide.with(context.getApplicationContext()).load(user.getImageUrl()).into(holder.profilePic);
         }
 
 

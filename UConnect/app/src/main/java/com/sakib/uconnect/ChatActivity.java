@@ -70,7 +70,7 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                startActivity(new Intent(mContext,MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
 
@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity {
                         ivProPic.setImageResource(R.drawable.blank_pro_pic);
                     }
                     else {
-                        Glide.with(mContext).load(user.getImageUrl()).into(ivProPic);
+                        Glide.with(mContext.getApplicationContext()).load(user.getImageUrl()).into(ivProPic);
                     }
 
 
