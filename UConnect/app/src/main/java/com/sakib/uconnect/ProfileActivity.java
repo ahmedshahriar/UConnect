@@ -47,7 +47,7 @@ import java.util.HashMap;
 public class ProfileActivity extends AppCompatActivity {
 
     private Context mContext = ProfileActivity.this;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ProfileActivity";
 
     private ImageView profileImage;
     private ImageView editImage;

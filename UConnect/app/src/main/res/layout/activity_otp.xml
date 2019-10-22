@@ -6,26 +6,105 @@
     android:layout_height="match_parent"
     tools:context=".auth.OtpActivity">
 
-    <EditText
-        android:id="@+id/otp_et_code"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+
+        <EditText
+            android:id="@+id/et2"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:layout_marginStart="@dimen/et_otp_margin"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+
+        <EditText
+            android:id="@+id/et3"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:layout_marginStart="@dimen/et_otp_margin"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+
+        <EditText
+            android:id="@+id/et4"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:layout_marginStart="@dimen/et_otp_margin"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+        <EditText
+            android:id="@+id/et5"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:layout_marginStart="@dimen/et_otp_margin"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+
+        <EditText
+            android:id="@+id/et6"
+            android:layout_width="@dimen/et_otp_width"
+            android:layout_height="@dimen/et_otp_height"
+            android:layout_marginStart="@dimen/et_otp_margin"
+            android:background="@drawable/background_otp"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:maxLength="1"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/otp_btn_verify"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="Verify"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/otp_et_code"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

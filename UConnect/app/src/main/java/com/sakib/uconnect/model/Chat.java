@@ -5,15 +5,25 @@ public class Chat {
     private String sender;
     private String receiver;
     private String createdAt;
+    private boolean isSeen;
+
+    public boolean isSeen() {
+        return isSeen;
+    }
+
+    public void setSeen(boolean seen) {
+        isSeen = seen;
+    }
 
     public Chat() {
     }
 
-    public Chat(String message, String sender, String receiver, String createdAt) {
+    public Chat(String message, String sender, String receiver, String createdAt, boolean isSeen) {
         this.message = message;
         this.sender = sender;
         this.receiver = receiver;
         this.createdAt = createdAt;
+        this.isSeen = isSeen;
     }
 
     public String getMessage() {

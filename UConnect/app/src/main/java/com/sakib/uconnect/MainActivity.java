@@ -22,22 +22,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.sakib.uconnect.notification.Token;
 import com.sakib.uconnect.adapter.ChatUserAdapter;
-import com.sakib.uconnect.model.Chat;
+import com.sakib.uconnect.model.ChatList;
 import com.sakib.uconnect.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private Context mContext = MainActivity.this;
     private static final String TAG = "MainActivity";
     private FirebaseUser firebaseUser;
-    private DatabaseReference databaseReference;
+    private DatabaseReference reference;
     private List<User> mUsers;
-    private List<String> userList;
+    private List<ChatList> chatLists;
     private ChatUserAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -49,28 +55,27 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.main_recycler_view_chat_user);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        userList = new ArrayList<>();
+        chatLists = new ArrayList<>();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+
+
+        reference = FirebaseDatabase.getInstance().getReference("ChatList").child(firebaseUser.getUid());
+
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               userList.clear();
+               chatLists.clear();
 
                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
-                   Chat chat = snapshot.getValue(Chat.class);
-                   if(chat.getSender().equals(firebaseUser.getUid())){
-                    userList.add(chat.getReceiver());
-                   }
 
-                   if(chat.getReceiver().equals(firebaseUser.getUid())){
-                       userList.add(chat.getSender());
-                   }
+                   ChatList chatList = snapshot.getValue(ChatList.class);
+                   chatLists.add(chatList);
+
                }
 
-               readChats();
+               chatList();
             }
 
             @Override
@@ -78,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        updateToken(FirebaseInstanceId.getInstance().getToken());
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -94,7 +101,48 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void readChats(){
+    private void updateToken(String token){
+        reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(firebaseUser.getUid()).setValue(token1);
+
+
+    }
+
+    private void chatList(){
+        mUsers = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUsers.clear();
+                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+
+                    User user = snapshot.getValue(User.class);
+
+                    for (ChatList chatList : chatLists){
+                        if (user != null && user.getId().equals(chatList.getId())) {
+                            mUsers.add(user);
+                        }
+
+                    }
+
+
+                    adapter = new ChatUserAdapter(mContext,mUsers, true);
+                    recyclerView.setAdapter(adapter);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+/*    private void readChats(){
         mUsers = new ArrayList<>();
         databaseReference  = FirebaseDatabase.getInstance().getReference("Users");
 
@@ -136,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -163,10 +211,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void status(String status){
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("status",status);
-        databaseReference.updateChildren(hashMap);
+        hashMap.put("lastSeenTime",currentTime.format(Calendar.getInstance().getTime()) );
+        hashMap.put("lastSeenDate",currentDate.format(Calendar.getInstance().getTime()) );
+        reference.updateChildren(hashMap);
     }
 
     @Override
@@ -176,10 +230,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         status("offline");
     }
+
 
     //    private void setupToolbar() {
 //        Toolbar toolbar = findViewById(R.id.toolbar);

@@ -1,8 +1,6 @@
 package com.sakib.uconnect.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.sakib.uconnect.ChatActivity;
 import com.sakib.uconnect.R;
 import com.sakib.uconnect.model.Chat;
-import com.sakib.uconnect.model.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
@@ -62,7 +62,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         final Chat chat = chatList.get(position);
 
         holder.tvMessageBody.setText(chat.getMessage());
-        Log.d(context+"", "onBindViewHolder: "+imageUrl);
 
         if(holder.profilePic!=null){
             if(imageUrl.equals("default")){
@@ -71,6 +70,31 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             else {
                 Glide.with(context.getApplicationContext()).load(imageUrl).into(holder.profilePic);
             }
+        }
+        if(position == chatList.size()-1){
+
+            if(chat.isSeen()){
+                holder.tvSeen.setText("seen");
+            }else {
+                holder.tvSeen.setText("delivered");
+            }
+
+        }
+        else {
+            holder.tvSeen.setVisibility(View.GONE);
+        }
+        String time = chat.getCreatedAt();
+        Date displayDateTime =null;
+        SimpleDateFormat formatter1=new SimpleDateFormat("MMM d, yyyy hh:mm:ss aaa", Locale.getDefault());
+        SimpleDateFormat targetFormat = new SimpleDateFormat("hh:mm aaa", Locale.getDefault());
+        try {
+            displayDateTime =formatter1.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (displayDateTime != null) {
+            holder.messageTime.setText(targetFormat.format(displayDateTime));
         }
 
 
@@ -89,6 +113,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         public TextView tvMessageBody;
         public ImageView profilePic;
         public TextView  messageTime;
+        private TextView tvSeen;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -99,6 +124,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             tvMessageBody = itemView.findViewById(R.id.text_message_body);
             profilePic = itemView.findViewById(R.id.image_message_profile);
             messageTime = itemView.findViewById(R.id.text_message_time);
+            tvSeen = itemView.findViewById(R.id.tv_seen);
 
         }
 

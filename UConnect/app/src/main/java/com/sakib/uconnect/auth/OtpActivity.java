@@ -38,17 +38,19 @@ public class OtpActivity extends AppCompatActivity {
     private static final String TAG = "OtpActivity";
     private Context mContext = OtpActivity.this;
 
+
+    private boolean isRegistered = false ;
     private String mobileNumber;
     private String verificationId;
     private FirebaseAuth mAuth;
     private DatabaseReference reference;
-    private EditText otp_et_code;
+    private EditText et1,et2,et3,et4,et5,et6;
     private Button otp_btn_verify;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks
             mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+        public void onCodeSent(String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
             verificationId = s;
         }
@@ -59,7 +61,15 @@ public class OtpActivity extends AppCompatActivity {
             if (code != null) {
                 //progressBar.setVisibility(View.VISIBLE);
                 verifyCode(code);
-                otp_et_code.setText(code);
+
+
+                et1.setText(String.valueOf(code.charAt(0)));
+                et2.setText(String.valueOf(code.charAt(1)));
+                et3.setText(String.valueOf(code.charAt(2)));
+                et4.setText(String.valueOf(code.charAt(3)));
+                et5.setText(String.valueOf(code.charAt(4)));
+                et6.setText(String.valueOf(code.charAt(5)));
+
             }
         }
 
@@ -74,7 +84,13 @@ public class OtpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
-        otp_et_code = findViewById(R.id.otp_et_code);
+        et1 = findViewById(R.id.et1);
+        et2 = findViewById(R.id.et2);
+        et3 = findViewById(R.id.et3);
+        et4 = findViewById(R.id.et4);
+        et5 = findViewById(R.id.et5);
+        et6 = findViewById(R.id.et6);
+
         otp_btn_verify = findViewById(R.id.otp_btn_verify);
         mAuth = FirebaseAuth.getInstance();
         if (getIntent().hasExtra("mobile_number")) {
@@ -86,12 +102,14 @@ public class OtpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String code = otp_et_code.getText().toString().trim();
+
+
+                String code = et1.getText().toString() + et2.getText().toString() + et3.getText().toString() + et4.getText().toString()+ et5.getText().toString() + et6.getText().toString();
 
                 if ((code.isEmpty() || code.length() < 6)){
 
-                    otp_et_code.setError("Enter code...");
-                    otp_et_code.requestFocus();
+//                    otp_et_code.setError("Enter code...");
+//                    otp_et_code.requestFocus();
                     return;
                 }
                 verifyCode(code);
@@ -114,9 +132,20 @@ public class OtpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            checkUser();
+//                            checkUser();
 
-                           // registerUser();
+                            Intent intent = new Intent(mContext, RegisterActivity.class);
+                            intent.putExtra("mobile_number", mobileNumber);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+
+
+//                            if(!isRegistered){
+//                                Log.d(TAG, "onComplete: not registered");
+//                            }
+
+
+                            // registerUser();
 
 //
 //                            Intent intent = new Intent(mContext, MainActivity.class);
@@ -154,21 +183,28 @@ public class OtpActivity extends AppCompatActivity {
                         assert user != null;
                         assert firebaseUser != null;
                         try {
-                            if (!user.getId().equals(firebaseUser.getUid())) {
+                            if (user.getId().equals(firebaseUser.getUid())) {
 
-
-                                registerUser();
-                            } else {
                                 Log.d(TAG, "onDataChange: already registered");
-                                Intent intent = new Intent(mContext, MainActivity.class);
+                                Intent intent = new Intent(mContext, RegisterActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
+                                isRegistered = true;
+                                //registerUser();
                             }
+                          /*  else {
+                                Log.d(TAG, "onDataChange: already registered");
+                                Intent intent = new Intent(mContext, RegisterActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }*/
                         } catch (Exception e) {
                             Log.d(TAG, "onDataChange: " + e);
                         }
 
                     }
+
+
                 }
                 }
 
@@ -180,6 +216,13 @@ public class OtpActivity extends AppCompatActivity {
 
             }
         });
+
+
+        if(!isRegistered){
+            Log.d(TAG, "checkUser: not registered");
+        }
+
+
     }
 
 
@@ -201,7 +244,7 @@ public class OtpActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "onComplete: registration success");
-                        Intent intent = new Intent(mContext, MainActivity.class);
+                        Intent intent = new Intent(mContext, RegisterActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     }

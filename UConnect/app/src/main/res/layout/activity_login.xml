@@ -6,8 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".auth.LoginActivity">
 
+
     <Button
         android:id="@+id/login_btn_send_code"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -24,6 +26,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:hint="@string/hint_login_mobile_number"
+        app:counterEnabled="true"
+        app:counterMaxLength="@integer/mobile_number_length"
+        app:errorEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +38,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="hint" />
+            android:inputType="number"
+            android:maxLength="@integer/mobile_number_length"  />
     </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

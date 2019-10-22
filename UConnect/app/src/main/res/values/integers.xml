@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Mobile number length-->
+
+    <integer name="mobile_number_length">11</integer>
+</resources>

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -74,7 +75,12 @@ public class ContactActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 //Do some magic
                 Log.d(TAG, "onQueryTextChange: "+s);
-                searchUsers(s);
+                if(s.equals("")){
+                    readUsers();
+                }else{
+                    searchUsers(s);
+                }
+
                 return false;
             }
         });
@@ -96,7 +102,44 @@ public class ContactActivity extends AppCompatActivity {
 
     private void searchUsers(String s){
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        
+        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("mobileNumber").startAt("+88"+s).endAt("+88"+s+"\uf0ff");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList.clear();
+                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+
+                    assert user != null;
+                    assert firebaseUser != null;
+
+                    if (!user.getId().equals(firebaseUser.getUid())) {
+                        userList.add(user);
+
+
+                    } else {
+
+                    }
+
+
+                }
+
+
+                Log.d(TAG, "onDataChange: "+userList.size()+userList);
+                userListAdapter = new UserListAdapter(mContext,userList);
+                recyclerView.setAdapter(userListAdapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
 
     }
 
@@ -112,9 +155,6 @@ public class ContactActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
-
-
-
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
                     Log.d(TAG, "onDataChange: "+user.getName());

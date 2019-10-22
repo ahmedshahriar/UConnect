@@ -11,6 +11,7 @@
     <!-- hint-->
     <string name="hint_name">Name</string>
     <string name="hint_mobile">Mobile</string>
+    <string name="hint_login_mobile_number">Mobile number</string>
 
 
 
